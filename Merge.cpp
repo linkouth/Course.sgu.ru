@@ -39,7 +39,7 @@ vector<people> inFile() {				//ввод из файла
 	while (in.peek() != EOF) {
 		in >> p.surname;				//фамилия
 		in >> p.position;				//должность
-		string tmp; in >> tmp;	
+		string tmp; in >> tmp;
 		p.birthday = stringToDate(tmp); //дата рождения
 		in >> p.experiance;				//стаж
 		in >> p.salary;					//зарплата
@@ -117,7 +117,7 @@ void BucketSort(vector<people> &staff) {						//блочная сортиров�
 		int k = (staff[i].experiance - minExperiance) / m;			//определение номера корзины
 		if (k == P)												//если k равно количеству корзин, 
 			segments[P - 1].push_back(staff[i]);				//то ддобавляем элемент в последнюю корзину
-		else 
+		else
 			segments[k].push_back(staff[i]);
 	}
 
@@ -131,39 +131,46 @@ void BucketSort(vector<people> &staff) {						//блочная сортиров�
 			staff.push_back(p);
 }
 
-void merge(vector<people> &staff, int left, int right, int middle) {	//функция слияния
-	if (left >= right || middle < left || middle > right)				//если границы не подходят,
-		return;															//то прекращаем алгоритм
-	if (right == left + 1 && staff[right] > staff[left]) {				//если в массиве 2 элементы и они неотсортированы, 
-		swap(staff[right], staff[left]);								//то меняем местами и
-		return;															//выходим из алгоритма
-	}
-
-	vector<people> buf(&staff[left], &staff[left] + (right + 1));		//массив-буффер
-
-	for (auto i = left, j = 0, k = middle - left + 1; i <= right; i++) {
-		if (j > middle - left) {
-			staff[i] = buf[k++];
-		}
-		else if (k > right - left) {
-			staff[i] = buf[j++];
-		}
-		else {
-			staff[i] = buf[j] < buf[k] ? buf[j++] : buf[k++];
-		}
-	}
-}
-
-void MergeSort(vector<people> &staff, int left, int right) {
-	if (left >= right)
-		return;
-
-	int middle = left + (right - left) / 2;
-
-	MergeSort(staff, left, middle);
-	MergeSort(staff, middle + 1, right);
-	merge(staff, left, right, middle);
-}
+//void merge(vector<people> &staff, int left, int right, int middle) {	//функция слияния
+//	if (left >= right || middle < left || middle > right)				//если границы не подходят,
+//		return;															//то прекращаем алгоритм
+//	if (right == left + 1 && staff[right] > staff[left]) {				//если в массиве 2 элементы и они неотсортированы, 
+//		swap(staff[right], staff[left]);								//то меняем местами и
+//		return;															//выходим из алгоритма
+//	}
+//
+//	int pos1 = left;
+//	int pos2 = middle + 1;
+//	int pos3 = 0;
+//
+//	vector<people> buf(right - left + 1);
+//
+//	while (pos1 <= middle && pos2 <= right) {
+//		if (staff[pos1] < staff[pos2])
+//			buf[pos3++] = staff[pos1++];
+//		else
+//			buf[pos3++] = staff[pos2++];
+//	}
+//
+//	while (pos2 <= right)
+//		buf[pos3++] = staff[pos2++];
+//	while (pos1 <= middle)
+//		buf[pos3++] = staff[pos1++];
+//
+//	for (int k = 0; k < right - left + 1; k++)
+//		staff[left + k] = buf[pos3];
+//}
+//
+//void MergeSort(vector<people> &staff, int left, int right) {
+//	if (left >= right)
+//		return;
+//
+//	int middle = (right + left) / 2;
+//
+//	MergeSort(staff, left, middle);
+//	MergeSort(staff, middle + 1, right);
+//	merge(staff, left, right, middle);
+//}
 
 //void mergeSort(vector<people> &staff, int left, int right) {			//сортировка слиянием
 //	if (left >= right)													//если границы не подходят, то
@@ -192,6 +199,49 @@ void MergeSort(vector<people> &staff, int left, int right) {
 //
 //}
 
+void merge(vector<people> &ar, int left, int right, int middle) {
+	if (left >= right && middle < left && middle > right) {
+		return;
+	}
+	if ((right == left + 1) && ar[left] > ar[right]) {
+		swap(ar[left], ar[right]);
+		return;
+	}
+
+	vector<people> buf(right - left + 1);
+	int cur = 0, i = left, j = middle + 1;
+	while (right - left + 1 != cur) {
+		if (i > middle) {
+			for (int k = j; k <= right; k++)
+				buf[cur++] = ar[k];
+		}
+		else if (j > right) {
+			for (int k = i; k <= middle; k++) {
+				buf[cur++] = ar[k];
+			}
+		}
+		else if (ar[i] > ar[j]) {
+			buf[cur++] = ar[j++];
+		}
+		else {
+			buf[cur++] = ar[i++];
+		}
+	}
+
+	for (int k = left; k < buf.size(); k++)
+		ar[k] = buf[k];
+}
+
+void MergeSort(vector<people> &ar, int left, int right) {
+	if (left >= right)
+		return;
+
+	int middle = (left + right) / 2;
+	MergeSort(ar, left, middle);
+	MergeSort(ar, middle + 1, right);
+	merge(ar, left, right, middle);
+}
+
 void BubbleSort(vector<people> &staff) {
 	for (int i = 0; i < staff.size(); i++) {
 		for (int j = staff.size() - 1; j > i; j--) {
@@ -205,8 +255,7 @@ int main() {
 	vector<people> staff;					//объявляем вектор с персоналом
 	staff = inFile();						//заполняем вектор
 
-	//MergeSort(staff, 0, staff.size());						//сортируем вектор слиянием
-	//BubbleSort(staff);
+	MergeSort(staff, 0, staff.size());		//сортируем вектор слиянием
 
 	for (auto p : staff)					//выводим персонал в output.txt
 		print(p);
