@@ -74,72 +74,20 @@ bool operator < (people first, people second) {		//переопределяем 
 }
 
 bool operator > (people first, people second) {		//переопределяем оператор >
-	if (first.experiance > second.experiance)
+	if (first.salary > second.salary)
+		return true;
+	if (first.salary == second.salary && first.birthday.dd > second.birthday.dd)
 		return true;
 	return false;
 }
 
-void InsertionSort(vector<people> &staff) {					//сортировка вставкой
-	for (int i = 1; i < staff.size(); i++) {
-		int j = i;
-		while (j > 0 && staff[j] < staff[j - 1]) {
-			swap(staff[j], staff[j - 1]);
-			j--;
-		}
+void merge(vector<people> &ar, int left, int right, int middle) {		//функция слияния
+	if (left >= right && middle < left && middle > right) {				//если неправильные границы,
+		return;															//то выходим
 	}
-}
-
-int getMaxExperiance(vector<people> staff) {				//поиск максимального опыта 
-	people maxExp = staff[0];								//предположительный максимум
-
-	for (auto p : staff)
-		maxExp = p > maxExp ? p : maxExp;					//сравниваем текущий максимум с элементом
-
-	return maxExp.experiance;
-}
-
-int getMinExperiance(vector<people> staff) {				//поиск минимального опыта
-	people minExp = staff[0];								//предположительный минимум
-
-	for (auto p : staff)									//сравниваем текущий минимум с элементом
-		minExp = p < minExp ? p : minExp;
-
-	return minExp.experiance;
-}
-
-void BucketSort(vector<people> &staff) {						//блочная сортировка
-	const int P = 5;											//количество корзин
-	int maxExperiance = getMaxExperiance(staff);				//максимальный опыт
-	int minExperiance = getMinExperiance(staff);				//минимальный опыт
-	const int m = (maxExperiance - minExperiance) / P;			//коэффициент m
-
-	vector< vector<people> > segments(5);							//отрезки-корзины
-
-	for (int i = 0; i < staff.size(); i++) {					//распределение элементов исходного массива по корзинам
-		int k = (staff[i].experiance - minExperiance) / m;			//определение номера корзины
-		if (k == P)												//если k равно количеству корзин, 
-			segments[P - 1].push_back(staff[i]);				//то ддобавляем элемент в последнюю корзину
-		else
-			segments[k].push_back(staff[i]);
-	}
-
-	for (int i = 0; i < P; i++) {								//в каждой корзине проводим 
-		InsertionSort(segments[i]);								//сортировку вставкой
-	}
-
-	staff.clear();												//очищаем исходный массив
-	for (int i = 0; i < P; i++)									//покорзинно
-		for (auto p : segments[i])								//добавляем в массив элементы
-			staff.push_back(p);
-}
-
-void merge(vector<people> &ar, int left, int right, int middle) {
-	if (left >= right && middle < left && middle > right) {
-		return;
-	}
-	if (right == left + 1){
-		if (ar[left] > ar[right]) 
-		   swap(ar[left], ar[right]);
+	if (right == left + 1) {											//в массиве 2 элемента
+		if (ar[left] > ar[right])										//если неупорядочены
+			swap(ar[left], ar[right]);									//меняем местами
 		return;
 	}
 
@@ -171,26 +119,17 @@ void MergeSort(vector<people> &ar, int left, int right) {
 	if (left >= right)
 		return;
 
-	int middle = (left + right) / 2;
-	MergeSort(ar, left, middle);
+	int middle = (left + right) / 2;								//граница раздела на 2 подмассива
+	MergeSort(ar, left, middle);									//реккурсивный вызов
 	MergeSort(ar, middle + 1, right);
-	merge(ar, left, right, middle);
-}
-
-void BubbleSort(vector<people> &staff) {
-	for (int i = 0; i < staff.size(); i++) {
-		for (int j = staff.size() - 1; j > i; j--) {
-			if (staff[j - 1] > staff[j])
-				swap(staff[j - 1], staff[j]);
-		}
-	}
+	merge(ar, left, right, middle);									//слияние 2 отсортированных массива
 }
 
 int main() {
 	vector<people> staff;					//объявляем вектор с персоналом
 	staff = inFile();						//заполняем вектор
 
-	MergeSort(staff, 0, staff.size()-1);		//сортируем вектор слиянием
+	MergeSort(staff, 0, staff.size() - 1);		//сортируем вектор слиянием
 
 	for (auto p : staff)					//выводим персонал в output.txt
 		print(p);
