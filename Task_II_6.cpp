@@ -5,18 +5,13 @@
 using namespace std;
 
 vector< list<int> > graph = {
-	{ 1, 2, 5, 6 },
+	{ 1, 2, 4 },
+	{ },
+	{ 0, 5 },
+	{ 1 },
+	{ },
 	{ 0 },
-	{ 0 },
-	{ 4, 5 },
-	{ 3, 5, 6 },
-	{ 0, 3, 4 },
-	{ 0, 4 },
-	{ 8 },{ 7 },
-	{ 10, 11, 12 },
-	{ 9 },
-	{ 9, 12 },
-	{ 9, 11 } };
+	{ 4, 5 } };
 
 vector<bool> used(graph.size());
 vector <int> result;
