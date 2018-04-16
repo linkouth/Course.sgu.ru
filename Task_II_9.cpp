@@ -6,10 +6,10 @@ using namespace std;
 
 vector< list<int> > graph = {
 	{ 1 },			// a 0
-	{ 2, 4, 5 },	// b 1
+	{ 2, 4, 5 },		// b 1
 	{ 3, 6 },		// c 2
 	{ 2, 7 },		// d 3
-	{ 5, 0},		// e 4
+	{ 5, 0 },		// e 4
 	{ 6 },			// f 5
 	{ 5 },			// g 6
 	{ 3, 6 }		// h 7
@@ -23,6 +23,8 @@ vector< list <int> > TransGraph(const vector< list <int> >& graph) {
 			result[el].push_back(i);
 		}
 	}
+
+	return result;
 }
 
 vector< list <int> > graphTrans = TransGraph(graph);
@@ -53,17 +55,13 @@ void topologicalSort() {
 	reverse(begin(order), end(order));
 }
 
-int i_element(const list<int>& lst, const int i) {
-	int res, j = 0;
-	
-}
 
 void dfs2(int v) {
 	used[v] = true;
 	component.push_back(v);
-	for (auto i = begin(graphTrans[v]); i != end(graphTrans[v]); i++) {
-		if (!used[graphTrans[v][i]])
-			dfs2(graphTrans[v][i]);
+	for (auto l : graphTrans[v]) {
+		if (!used[l])
+			dfs2(l);
 	}
 }
 
@@ -74,7 +72,10 @@ int main() {
 	for (size_t i = 0; i < graph.size(); ++i) {
 		int v = order[graph.size() - 1 - i];
 		if (!used[v]) {
-
+			dfs2(v);
+			for (auto l : component)
+				cout << l << ' ';
+			component.clear();
 		}
 	}
 
