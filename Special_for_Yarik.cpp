@@ -5,7 +5,7 @@
 using namespace std;
 
 int main() {
-	vector< list<int> > graph = {						// граф
+	vector< list<int> > graph = {						// ГЈГ°Г Гґ
 		{ 1, 2, 5, 6 },
 		{ 0 },
 		{ 0 },
@@ -19,13 +19,13 @@ int main() {
 		{ 9, 12 },
 		{ 9, 11 } };
 
-	vector<int> result(graph.size());					// результат
+	vector<int> result(graph.size());					// Г°ГҐГ§ГіГ«ГјГІГ ГІ
 	
-	for (size_t i = 0; i < graph.size(); ++i) {			// степень полуисхода
+	for (size_t i = 0; i < graph.size(); ++i) {			// Г±ГІГҐГЇГҐГ­Гј ГЇГ®Г«ГіГЁГ±ГµГ®Г¤Г 
 		result[i] = graph[i].size();
 	}
 
-	for (size_t i = 0; i < result.size(); ++i) {		// вывод результата
+	for (size_t i = 0; i < result.size(); ++i) {		// ГўГ»ГўГ®Г¤ Г°ГҐГ§ГіГ«ГјГІГ ГІГ 
 		cout << i << " : " << result[i] << endl;
 	}
 	
